@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from gpiozero import DigitalInputDevice
 import time
-import mysql.connector
+import mysql.connector as mariadb
 import sys
 import Adafruit_DHT
 from picamera import PiCamera
@@ -10,14 +10,14 @@ from time import sleep
 # C:\Users\Your Name\AppData\Local\Programs\Python\Python36-32\Scripts>python -m pip install mysql-connector
 # daca nu exista o baza de date o va crea, iar daca exista e va conecta la ea
 try:
-    database = mysql.connector.connect(
+    database = mariadb.connect(
         host="localhost",
         user="greenHouse",
         passwd="greenHouse",
         mydb="mydatabase"
         )
     mycursor = database.cursor()
-except mysql.connector.Error:
+except mariadb.Error:
     database = mysql.connector.connect(
         host="localhost",
         user="greenHouse",
@@ -50,7 +50,7 @@ while True:
     sql = "INSERT INTO greenHouseInformation(temperatura, umiditate) VALUES (%d,%d)"   
     val = (temperature, humidity)
     mycursor.execute(sql,val)
-    mydb.commit()
+    database.commit()
     time.sleep(60)
 
 
