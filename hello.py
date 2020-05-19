@@ -63,14 +63,45 @@ def waterPlant():
 
 @app.route('/airhumidity')
 def getAirHumidity():
-    #cod senzor umiditate aer
-    return "You have accessed air humidity"
+    humidity = Adafruit_DHT.read_retry(11)
+    current_time=datetime.date.today().strftime('%d/%m/%Y')
+    database = sqlite3.connect('smartgarden.db')
+    try:
+        database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", ('',humidity, current_time))
+    except:
+        database.execute(
+            '''CREATE TABLE GREENHOUSE(ID INTEGER PRIMARY KEY AUTOINCREMENT,temperatura FLOAT, umiditate FLOAT)''')
+        database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", ('', humidity,current_time))
+    database.commit()
+    database.close()
+    return "Humidity is "+str(humidity)
 
 
 @app.route('/airtemperature')
 def getAirTemp():
-    #cod senzor temperatura aer
-    return "You have accessed air temperature"
+    temperature = Adafruit_DHT.read_retry(4)
+    current_time=datetime.date.today().strftime('%d/%m/%Y')
+    database = sqlite3.connect('smartgarden.db')
+    try:
+        database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", (temperature,'', current_time))
+    except:
+        database.execute(
+            '''CREATE TABLE GREENHOUSE(ID INTEGER PRIMARY KEY AUTOINCREMENT,temperatura FLOAT, umiditate FLOAT)''')
+        database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", (temperature, '',current_time))
+    database.commit()
+    database.close()
+    return "Temperature is "+ str(temperature)
+
+# aici vine ceva cu route despre care nu stiu prea mult
+# afiseaza ultimele 5 inregistrari din baza de date
+def seeHistory():
+	string=""
+	database = sqlite3.connect('smartgarden.db')
+	cursor = database.execute("SELECT * from GREENHOUSE WHERE ID > (SELECT MAX(ID) FROM GREENHOUSE)-5")
+    for row in cursor:
+        string += "Date: "+str(row[3])+" Temperature: "+ str(row[1])+" Humidity: "+ str(row[2])+"\n"
+    database.close()
+    return string
 
 
 @app.route('/viewcamera')
