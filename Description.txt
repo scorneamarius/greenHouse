@@ -1,4 +1,5 @@
 PIN 11 (GPIO 17) 1st Moisture Sensor
 PIN 13 (GPIO 27) 2nd Moisture Sensor
-PIN  7 (GPIO 4 ) Temperature and Humidity DHT11 Sensor  
+PIN  7 (GPIO 4 ) Temperature and Humidity DHT11 Sensor
+PIN 36 (GPIO 36) Releu control signal for valve
  
