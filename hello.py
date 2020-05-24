@@ -1,21 +1,14 @@
+import RPi.GPIO as GPIO
 import time
-
 from flask import Flask, render_template, redirect, request
 from flask_sqlalchemy import SQLAlchemy
 from gpiozero import DigitalInputDevice
 import datetime
 import sqlite3
-import sys
 import Adafruit_DHT
 from picamera import PiCamera
 from time import sleep
-camera=PiCamera()
-camera.rotation=180
-camera.start_preview()
-camera.start_recording('video.h264')
-#sleep(30)
-camera.stop_recording()
-camera.stop_preview()
+
 d0_input = DigitalInputDevice(17)
 d1_input = DigitalInputDevice(27)
 contor = 0
@@ -40,8 +33,14 @@ def waterPlant():
             print('Info from sensor:Moisture threshhold reached!')
             current_time=""
         else:
-            print('Need to water the plant') #cod pompa de apa
-            current_time=datetime.date.today().strftime('%d/%m/%Y')
+            print('Need to water the plant')
+            GPIO.setmode(GPIO.BOARD)
+            GPIO.setup(36, GPIO.OUT)
+            GPIO.output(36, True)  # deschidem valva
+            sleep(15)  # delay-ul , atata timp va uda gradina
+            GPIO.output(36, False)  # inchidem valva
+            # Se foloseste pinul 36 de pe placa
+            current_time = datetime.date.today().strftime('%d/%m/%Y')
 
         print('Temp: {0:0.1f} C  Humidity: {1:0.1f} %'.format(temperature, humidity))
         try:
@@ -67,11 +66,11 @@ def getAirHumidity():
     current_time=datetime.date.today().strftime('%d/%m/%Y')
     database = sqlite3.connect('smartgarden.db')
     try:
-        database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", ('',humidity, current_time))
+        database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", ('', humidity, current_time))
     except:
         database.execute(
             '''CREATE TABLE GREENHOUSE(ID INTEGER PRIMARY KEY AUTOINCREMENT,temperatura FLOAT, umiditate FLOAT)''')
-        database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", ('', humidity,current_time))
+        database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", ('', humidity, current_time))
     database.commit()
     database.close()
     return "Humidity is "+str(humidity)
@@ -90,23 +89,29 @@ def getAirTemp():
         database.execute("INSERT INTO GREENHOUSE (temperatura,umiditate,date) VALUES (?,?,?)", (temperature, '',current_time))
     database.commit()
     database.close()
-    return "Temperature is "+ str(temperature)
+    return "Temperature is " + str(temperature)
 
-# aici vine ceva cu route despre care nu stiu prea mult
+
 # afiseaza ultimele 5 inregistrari din baza de date
+@app.route("/viewstatistics", methods=["GET"])
 def seeHistory():
-	string=""
-	database = sqlite3.connect('smartgarden.db')
-	cursor = database.execute("SELECT * from GREENHOUSE WHERE ID > (SELECT MAX(ID) FROM GREENHOUSE)-5")
+    string=""
+    database = sqlite3.connect('smartgarden.db')
+    cursor = database.execute("SELECT * from GREENHOUSE WHERE ID > (SELECT MAX(ID) FROM GREENHOUSE)-5")
     for row in cursor:
-        string += "Date: "+str(row[3])+" Temperature: "+ str(row[1])+" Humidity: "+ str(row[2])+"\n"
+        string += "Date: "+str(row[3])+" Temperature: " + str(row[1])+" Humidity: " + str(row[2])+"\n"
     database.close()
     return string
 
 
 @app.route('/viewcamera')
 def viewCameraFeed():
-    #cod camera
+    camera = PiCamera()
+    camera.rotation = 180
+    camera.start_preview()
+    camera.start_recording('video.h264')
+    camera.stop_recording()
+    camera.stop_preview()
     return render_template("camera.html")
 
 
