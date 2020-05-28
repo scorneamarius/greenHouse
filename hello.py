@@ -8,6 +8,7 @@ import sqlite3
 import Adafruit_DHT
 from picamera import PiCamera
 from time import sleep
+from random import randint
 GPIO.setmode(GPIO.BOARD)
 contor = 0
 
@@ -99,8 +100,12 @@ def viewCameraFeed(): #captura de ecran a serei
     camera.rotation = 180
     camera.start_preview()
     sleep(2)
-    camera.capture('./static/image.jpg')
+    nameImage = './static/'
+    number = randint(0,1000000)
+    nameImage += 'image'+str(number)+'.jpg'
+    camera.capture(nameImage)
     camera.stop_preview()
-    return render_template("camera.html")
+    # return render_template("camera.html")
+    return <img src=nameImage width="300" height="300">
 if __name__ == "__main__":
     app.run(debug=True)
