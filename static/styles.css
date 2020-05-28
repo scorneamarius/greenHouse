@@ -1,0 +1,19 @@
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.footer{
+    margin-top: 50px;
+}
+
+.footer h2{
+    text-align: center;
+}
+.footer ul{
+    list-style: none;
+    text-align: center;
+}
+.footer ul li{
+    padding: 2px 2px 2px 2px;
+}

@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>SmartGarden</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css')}}">
+<script src="https://kit.fontawesome.com/3b4c5eaa52.js" crossorigin="anonymous"></script>
+<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align: center;">SmartGarden - plant automation system</h2>
+        <div class="service-list">
+            <ul class="list-group">
+                <li class="list-group-item">
+                   <a href="waterplant" id="water" onclick="alert('Your plant is hydrated! :)')">Water Plant</a>
+                </li>
+                <li class="list-group-item">
+                   <a href="airhumidity">Get Air Humidity</a>
+                </li>
+                <li class="list-group-item">
+                   <a href="airtemperature">Get Air Temperature</a>
+                </li>
+                <li class="list-group-item">
+                   <a href="viewcamera">View Camera Feed</a>
+                </li>
+                <li class="list-group-item">
+                    <a href="viewstatistics">View Statistics</a>
+                </li>
+              </ul>
+        </div>
+    </div>
+    <br />
+    <br>
+    <br>
+    <div class="footer">
+        <h2>The team:</h2>
+        <ul>
+            <li>Razaila Geanina-Alexandra</li>
+            <li>Scornea Alfred-Marius</li>
+            <li>Schipala Ianko-Radoslav</li>
+            <li>Tamas Roland</li>
+        </ul>
+    </div>
+</body>
+</html>
